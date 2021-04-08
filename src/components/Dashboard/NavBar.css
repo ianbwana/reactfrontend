@@ -1,0 +1,17 @@
+.nav-custom{
+    color: aliceblue;
+}
+.logout-text{
+    cursor: pointer;
+}
+.navbrand-custom{
+    color: #FFFFFF !important;
+    cursor: pointer;
+}
+.navbar-light .navbar-toggler {
+    color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+}
+Navbar{
+    cursor: pointer;
+}

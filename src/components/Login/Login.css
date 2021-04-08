@@ -1,0 +1,40 @@
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+}
+.form-column{
+    margin-top: 20%;
+    background-color: #343a40;
+    margin-top: 20%;
+    border-radius: 10px;
+}
+.login-form{
+    color: #FFFFFF;
+    border-radius: 10px;
+    margin: 50px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+.login-form-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-button{
+    margin-top: 20px;
+    width: 180px;
+    height: 40px im !important;
+    border-radius: 5px;
+
+}
+.input-box{
+    background-color: #FFFFFF i !important;
+}
+.form-text{
+    color: #FFFFFF i !important;
+}
