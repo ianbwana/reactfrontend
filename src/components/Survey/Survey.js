@@ -75,6 +75,7 @@ const Survey = () => {
       timeout: 90000,
     })
       .then((res) => {
+        console.log(res)
         setLoading(false)
         swal("Good job!", "Your answers were submitted!", "success").then(()=>{window.location.href = "/dashboard"});
       })
@@ -144,7 +145,7 @@ const Survey = () => {
                                               <Col key={question.id}>
                                                 {question.type === "multiselect" ?
                                                   <img
-                                                    src={question.uploads && question.uploads[0] && question.uploads[0].file_url ? `${question.uploads[0].file_url}`: `${question.description}`}
+                                                    src={question.uploads && question.uploads[0] && question.uploads[0].file_url ? toString(question.uploads[0].file_url):  toString(question.description)}
                                                     alt={question.column_match}
                                                   />: null}
 

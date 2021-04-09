@@ -42,11 +42,8 @@
 }
 .button-container{
     display: flex;
-    align-items: center;
-    justify-content: center;
 }
 .next-button{
-    justify-self: center;
     margin: 20px;
     margin-top: 70px;
     width: 180px;
