@@ -36,7 +36,6 @@ const Dashboard = () => {
       timeout: 90000,
     })
       .then((res) => {
-        console.log(res.data);
         setSurvey(res.data);
         localStorage.setItem("Survey", JSON.stringify(res.data));
       })
@@ -60,7 +59,6 @@ const Dashboard = () => {
       timeout: 90000,
     })
       .then((res) => {
-        console.log(res.data);
         setUserInfo(res.data);
         localStorage.setItem("UserProfile", JSON.stringify(res.data));
       })

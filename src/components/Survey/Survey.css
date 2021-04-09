@@ -1,0 +1,55 @@
+
+.start-button{
+    margin-top: 20px;
+    width: 180px;
+    height: 40px im !important;
+    color: #FFFFFF;
+    margin-top: 10px;
+    margin-bottom: 100px;
+
+}
+.dashboard-container{
+    margin-top: 20px;
+    padding: 20px;
+}
+.survey-start-container{
+    display: flex;
+    flex-direction: column;
+}
+.survey-text{
+
+    margin-top: 90px;
+}
+.page-navigator > ul{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.form-container-row{
+    height: 100%;
+    flex-direction: column;
+}
+.page-title{
+    margin: 20px;
+    
+}
+.section-title{
+    margin-top: 20px;
+    height: 40px;
+}
+.image-container{
+    height: 80px;
+    background-color: yellow;
+}
+.button-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.next-button{
+    justify-self: center;
+    margin: 20px;
+    margin-top: 70px;
+    width: 180px;
+    height: 30px;
+}
