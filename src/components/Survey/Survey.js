@@ -11,7 +11,7 @@ import {
   Input,
   FormText,
 } from "reactstrap";
-import Multistep from "react-multistep";
+import swal from 'sweetalert';
 
 import "./Survey.css";
 
@@ -23,6 +23,7 @@ const Survey = () => {
   const [loading, setLoading] = useState(true);
   const [pages, setPages] = useState();
   const [currentPage, setCurrentPage] = useState(0);
+  const [answers, setAnswers] = useState([])
 
   useEffect(() => {
     getSurvey();
@@ -48,12 +49,7 @@ const Survey = () => {
         setSurvey(res.data);
         setPages(res.data.forms[0].pages);
         setLocations(res.data.locations);
-        let countries_clean = res.data.locations;
-        //   .forEach(element => {
-        //       return element.country
-        //   })
         localStorage.setItem("Survey", JSON.stringify(res.data));
-        //   console.log(countries_clean)
       })
       .catch((err) => {
         setLoading(false);
@@ -62,6 +58,35 @@ const Survey = () => {
   };
 
   const toggle = () => setSurveyStarted(!surveyStarted);
+
+  const postSurvey = () => {
+    setLoading(true)
+    let url = "http://104.248.0.49/api/v1/recruitment/answers/submit/"
+    axios({
+      method: "post",
+      url: url,
+      crossdomian: true,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${JSON.parse(
+          localStorage.getItem("AccessToken")
+        )}`,
+      },
+      timeout: 90000,
+    })
+      .then((res) => {
+        setLoading(false)
+        swal("Good job!", "Your answers were submitted!", "success").then(()=>{window.location.href = "/dashboard"});
+      })
+      .catch((err) => {
+        setLoading(false);
+
+        swal("Sorry!", "Try again", "error");
+        console.log(err);
+      });
+  };
+
+  
 
   return (
     <div className="content-wrapper">
@@ -117,12 +142,11 @@ const Survey = () => {
                                           {section.questions.map(
                                             (question, index) => (
                                               <Col key={question.id}>
-                                                {/* <div className="image-conatiner"> */}
-                                                  {/* <img
-                                                    src={question.description}
-                                                    alt="question image"
-                                                  /> */}
-                                                {/* </div> */}
+                                                {question.type === "multiselect" ?
+                                                  <img
+                                                    src={question.uploads && question.uploads[0] && question.uploads[0].file_url ? `${question.uploads[0].file_url}`: `${question.description}`}
+                                                    alt={question.column_match}
+                                                  />: null}
 
                                                 <Form>
                                                       {question.type === "text" || question.type === "tel" ?
@@ -135,6 +159,17 @@ const Survey = () => {
                                                         type="text"
                                                         name={question.column_match}
                                                         id={question.id}
+                                                        onChange={(e)=>{
+                                                          let values = []
+                                                          e.preventDefault()
+                                                          values.push(e.target.value)
+                                                          let value = values.pop()
+                                                          answers.push({
+                                                            "column_match": question.column_match,
+                                                            "q_ans": value,
+                                                            "q_id": question.id
+                                                          })
+                                                        }}
                                                         placeholder={question.column_match}
                                                       />
 
@@ -149,6 +184,14 @@ const Survey = () => {
                                                             type="radio"
                                                             name={option.name}
                                                             id={option.id}
+                                                            onChange={(e)=>{
+                                                              e.preventDefault()
+                                                              answers.push({
+                                                                "column_match": question.column_match,
+                                                                "q_ans": e.target.value,
+                                                                "q_id": question.id
+                                                              })}}
+                                                            
                                                           />
                                                           {option.name}
                                                           </Label>
@@ -157,12 +200,34 @@ const Survey = () => {
                                                       </div> : question.type === "multiselect" ?
                                                       <div>
                                                         <FormGroup>
-                                                          <Label for="exampleSelectMulti">{question.column_match}</Label>
+                                                          <Label for="exampleSelectMulti">{question.text.replace(/(<([^>]+)>)/gi, "")}</Label>
 
-                                                          <Input type="select" name="selectMulti" id="exampleSelectMulti" multiple>
+                                                          <Input 
+                                                          type="select" 
+                                                          name={question.column_match} 
+                                                          id={question.id} 
+                                                          multiple
+                                                          onChange={(e)=>{
+                                                            e.preventDefault()
+                                                            let options = e.target.options
+                                                            let values = []
+                                                            for (var i = 0, l = options.length; i < l; i++) {
+                                                              if (options[i].selected) {
+                                                                values.push(parseInt(options[i].value));
+                                                              }
+                                                            }
+                                                            // values.push(e.target.value)
+
+                                                            answers.push({
+                                                              "column_match": question.column_match,
+                                                              "q_ans": values,
+                                                              "q_id": question.id
+                                                            })
+                                                            // console.log(values)
+                                                            }} >
                                                           {
                                                             question.q_options.map((option, index)=>(
-                                                              <option key={option.id}>{option.name}</option>
+                                                              <option value={option.id}key={option.id}>{option.name}</option>
                                                             ))}
                                                           </Input>
                                                         
@@ -189,10 +254,19 @@ const Survey = () => {
                               color="secondary"
                               className="next-button"
                               onClick={() => {
-                                window.location.href = "/dashboard"
+                                setCurrentPage(currentPage-1)
                               }}
                             >
-                              Go Back
+                              Back to survey
+                            </Button>
+                            <Button
+                              color="secondary"
+                              className="next-button"
+                              onClick={() => {
+                                postSurvey()
+                              }}
+                            >
+                              Submit
                             </Button>
                             </>
                           )}
@@ -206,15 +280,25 @@ const Survey = () => {
                                 if (currentPage < pages.length) {
                                   setCurrentPage(currentPage + 1);
                                 }
-                                else if(currentPage === pages.length){
-                                  window.location.reload()
-                                } 
                               }}
                             >
-                              {currentPage === pages.length ? "Finish" : "Next Page"}
+                              Next Page
                             </Button>
                           </Col>
-                        ) : null}
+                        ) : currentPage === pages.length - 1 ? (
+
+                          <Button
+                          color="secondary"
+                          className="next-button"
+                          onClick={() => {
+                            if (currentPage > 0) {
+                              setCurrentPage(currentPage - 1);
+                            }
+                          }}
+                        >
+                          Previous Page
+                        </Button>
+                        ): null}
                       </Row>
                     </div>
                   </>
