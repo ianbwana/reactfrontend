@@ -24,6 +24,7 @@ const Survey = () => {
   const [pages, setPages] = useState();
   const [currentPage, setCurrentPage] = useState(0);
   const [answers, setAnswers] = useState([])
+  const [surveyAvailable, setSurveyAvailable] = useState(false)
 
   useEffect(() => {
     getSurvey();
@@ -44,8 +45,9 @@ const Survey = () => {
       timeout: 90000,
     })
       .then((res) => {
+        console.log(res.data)
+        setSurveyAvailable(true)
         setLoading(false);
-        console.log(res.data);
         setSurvey(res.data);
         setPages(res.data.forms[0].pages);
         setLocations(res.data.locations);
@@ -62,6 +64,22 @@ const Survey = () => {
   const postSurvey = () => {
     setLoading(true)
     let url = "http://104.248.0.49/api/v1/recruitment/answers/submit/"
+    let startTime = new Date()
+    let formattedTime = startTime.toLocaleString()
+    let surveyId = survey.forms[0].id
+
+    let data = {
+      "ans": answers,
+      "start_time": formattedTime,
+      "end_time": formattedTime,
+      "local_id": 0,
+      "loaction": {
+        "accuracy": 0,
+        "lat": 0,
+        "lon": 0
+      },
+      "survey_id": surveyId
+    }
     axios({
       method: "post",
       url: url,
@@ -72,6 +90,7 @@ const Survey = () => {
           localStorage.getItem("AccessToken")
         )}`,
       },
+      data: data,
       timeout: 90000,
     })
       .then((res) => {
@@ -80,6 +99,7 @@ const Survey = () => {
         swal("Good job!", "Your answers were submitted!", "success").then(()=>{window.location.href = "/dashboard"});
       })
       .catch((err) => {
+        console.log(err)
         setLoading(false);
 
         swal("Sorry!", "Try again", "error");
@@ -99,7 +119,7 @@ const Survey = () => {
               style={{ width: "3rem", height: "3rem", marginTop: "100px" }}
             />
           </Col>
-        ) : !surveyStarted ? (
+        ) : !surveyStarted && surveyAvailable? (
           <Col md="12" className="survey-start-container">
             <p className="survey-text">
               {" "}
@@ -145,7 +165,7 @@ const Survey = () => {
                                               <Col key={question.id}>
                                                 {question.type === "multiselect" ?
                                                   <img
-                                                    src={question.uploads && question.uploads[0] && question.uploads[0].file_url ? toString(question.uploads[0].file_url):  toString(question.description)}
+                                                    src={question.uploads && question.uploads[0] && question.uploads[0].file_url ? `${(question.uploads[0].file_url)}`:  `${toString(question.description)}`}
                                                     alt={question.column_match}
                                                   />: null}
 
@@ -170,6 +190,7 @@ const Survey = () => {
                                                             "q_ans": value,
                                                             "q_id": question.id
                                                           })
+                                                          // console.log(value)
                                                         }}
                                                         placeholder={question.column_match}
                                                       />
@@ -191,7 +212,11 @@ const Survey = () => {
                                                                 "column_match": question.column_match,
                                                                 "q_ans": e.target.value,
                                                                 "q_id": question.id
-                                                              })}}
+                                                              })
+                                                              console.log(e.target.value)
+                                                            }
+                                                            }
+                                                              
                                                             
                                                           />
                                                           {option.name}
@@ -286,7 +311,7 @@ const Survey = () => {
                               Next Page
                             </Button>
                           </Col>
-                        ) : currentPage === pages.length - 1 ? (
+                        ) : currentPage <= pages.length - 1 ? (
 
                           <Button
                           color="secondary"

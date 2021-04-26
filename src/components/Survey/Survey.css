@@ -46,6 +46,9 @@
 .next-button{
     margin: 20px;
     margin-top: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 180px;
     height: 30px;
 }
