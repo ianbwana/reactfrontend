@@ -3,7 +3,7 @@
 This project is created with React. 
 Once you log in with the credentials provided, you can click on any part of the navbar to navigate to the survey form or dashboard or to log out.
 
-A live demo of this app is hosted here: [https://surveyformbwana.herokuapp.com/]
+A live demo of this app is hosted ~~here~~:
 
 To run the application in your computer,
 clone the github repo by running
